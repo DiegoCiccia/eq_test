@@ -1,0 +1,8 @@
+v 1.0.0
+d Diego Ciccia
+d cicciadiego99@gmail.com
+d https://github.com/DiegoCiccia/eq_test
+
+d 'eq_test': Stata package for pairwise coefficient equality tests
+
+p eq_test

@@ -1,0 +1,5 @@
+v 1.0.0
+d 'eq_test': Stata package for pairwise coefficient equality tests
+d 
+d 
+F eq_test.ado
