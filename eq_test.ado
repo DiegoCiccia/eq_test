@@ -21,7 +21,7 @@ forv i = 1/`n_mod' {
     noi di "{text: Model `i'}: `eq_`i''"
 }
 noi di ""
-noi di "Bootstrap reps: `breps'. Each dot below is 50 reps."
+noi di "Bootstrap reps: `brep'. Each dot below is 50 reps."
 
 matrix define resmat = J(`brep', `n_mod', .) 
 if "`strata'" != "" {
@@ -63,4 +63,5 @@ di "Pairwise equality tests (p values):"
 mat coln results = `cols'
 mat rown results = `rows'
 matlist results, format(%9.4fc)
+cap drop resmat*
 end
