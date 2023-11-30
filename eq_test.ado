@@ -1,7 +1,7 @@
 cap program drop eq_test
-program define eq_test, rclass
+program define eq_test, eclass
 qui {
-syntax , models(string) coef(string) brep(string) [strata(string)]
+syntax , models(string) coef(string) brep(string) [strata(string) pairwise] 
 local n_mod = length("`models'") - length(subinstr("`models'", ";", "", .)) + 1
 if substr("`models'", length("`models'"), 1) != ";" {
     local models = "`models';"
@@ -47,8 +47,15 @@ forv i = 1/`=`n_mod' -1' {
     local icol = `irow'
     local rows `rows' `i'
     forv j = `=`i' + 1'/`n_mod' {
-        di `i', `j'
-        ttest resmat`i' == resmat`j'
+        if "`pairwise'" == "" {
+            local type "Mean"
+            sum resmat`j'
+            ttest resmat`i' == `=r(mean)'
+        }
+        else {
+            local type "Pairwise"
+            ttest resmat`i' == resmat`j'
+        }
         mat results[`irow', `icol'] = r(p)
         local icol = `icol' + 1
     }
@@ -59,9 +66,10 @@ forv j = 2/`n_mod' {
 }
 }
 di _newline
-di "Pairwise equality tests (p values):"
+di "`type' equality tests (p values):"
 mat coln results = `cols'
 mat rown results = `rows'
 matlist results, format(%9.4fc)
+ereturn matrix res = results
 cap drop resmat*
 end
