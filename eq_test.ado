@@ -1,7 +1,7 @@
 cap program drop eq_test
 program define eq_test, eclass
 qui {
-syntax , models(string) coef(string) brep(string) [strata(string) pairwise] 
+syntax , models(string) coef(string) brep(string) [strata(string)] 
 local n_mod = length("`models'") - length(subinstr("`models'", ";", "", .)) + 1
 if substr("`models'", length("`models'"), 1) != ";" {
     local models = "`models';"
@@ -27,6 +27,10 @@ matrix define resmat = J(`brep', `n_mod', .)
 if "`strata'" != "" {
     local byopt = "by(`strata')"
 }
+forv i = 1/`n_mod' {
+    `eq_`i''
+    local k`i' = `coef_`i''
+}
 forv j = 1/`brep' {
     preserve
     bsample `=_N', `byopt'
@@ -47,17 +51,12 @@ forv i = 1/`=`n_mod' -1' {
     local icol = `irow'
     local rows `rows' `i'
     forv j = `=`i' + 1'/`n_mod' {
-        if "`pairwise'" == "" {
-            local type "Mean"
-            sum resmat`j'
-            ttest resmat`i' == `=r(mean)'
-        }
-        else {
-            local type "Pairwise"
-            ttest resmat`i' == resmat`j'
-        }
-        mat results[`irow', `icol'] = r(p)
+        gen diff_`i'`j' = resmat`i' - resmat`j'
+        noi sum diff_`i'`j'
+
+        mat results[`irow', `icol'] = 1 - t(`brep', `= abs((`k`i'' - `k`j'')/`r(sd)')') + t(`brep', `= - abs((`k`i'' - `k`j'')/`r(sd)')')
         local icol = `icol' + 1
+        drop diff_`i'`j'
     }
     local irow = `irow' + 1
 }
