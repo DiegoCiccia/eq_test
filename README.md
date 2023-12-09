@@ -1,8 +1,8 @@
 # eq_test
-Stata package for pairwise equality tests of N coefficients from generic regression models. 
+Stata package for bootstrap equality tests of N coefficients from generic regression models. 
 
 # Intro
-This package allows the user to test the hypothesis that the coefficients estimated by two different regression models are not statistically different. The program uses bootstrap resampling and runs the regression models on the resulting samples. The procedure ends with a pairwise two-sample t-test across the specified coefficients.
+This package allows the user to test the hypothesis that the coefficients estimated by two among N different regression models are not statistically different. The program uses bootstrap resampling to compute standard errors for the difference of the estimated coefficients. 
 
 # Setup
 ```s
@@ -19,5 +19,5 @@ gen S = uniform()
 gen D = (_n > `G'/2) * (S > 0.5)
 gen Y = uniform() * (1 + D * uniform() + S * 10 * uniform())
 gen X = uniform()
-eq_test, models(reg Y D; reg Y D S; reg Y D X) coef(e(b)[1,1]; e(b)[1,1]; e(b)[1,1]) brep(500) 
+eq_test, models(reg Y D; reg Y D S; reg Y D X) brep(500) 
 ```
