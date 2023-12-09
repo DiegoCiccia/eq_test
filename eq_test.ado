@@ -37,8 +37,8 @@ noi di ""
 noi di "Bootstrap reps: `brep'. Each dot below is 50 reps."
 
 matrix define resmat = J(`brep', `n_mod', .) 
-if "`strata'" != "" {
-    local byopt = "cluster(`strata')"
+if "`cluster'" != "" {
+    local byopt = "cluster(`cluster')"
 }
 forv j = 1/`brep' {
     preserve
