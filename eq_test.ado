@@ -1,7 +1,7 @@
 cap program drop eq_test
 program define eq_test, eclass
 qui {
-syntax , models(string) brep(string) [coef(string) strata(string)] 
+syntax , models(string) brep(string) [coef(string) cluster(string)] 
 local n_mod = length("`models'") - length(subinstr("`models'", ";", "", .)) + 1
 if substr("`models'", length("`models'"), 1) != ";" {
     local models = "`models';"
@@ -38,7 +38,7 @@ noi di "Bootstrap reps: `brep'. Each dot below is 50 reps."
 
 matrix define resmat = J(`brep', `n_mod', .) 
 if "`strata'" != "" {
-    local byopt = "by(`strata')"
+    local byopt = "cluster(`strata')"
 }
 forv j = 1/`brep' {
     preserve
