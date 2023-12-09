@@ -11,8 +11,13 @@ net install eq_test, from("https://raw.githubusercontent.com/DiegoCiccia/eq_test
 
 # Example
 ```s
-set seed 45612
-bcuse crime4, clear
-gen randvar = uniform()
-eq_test, models(reg prbarr polpc; reg prbarr polpc randv; reg prbarr polpc crmrte) coef(e(b)[1,1]; e(b)[1,1]; e(b)[1,1]) brep(500)
+set seed 4561
+clear 
+local G = 10000
+set obs `G'
+gen S = uniform()
+gen D = (_n > `G'/2) * (S > 0.5)
+gen Y = uniform() * (1 + D * uniform() + S * 10 * uniform())
+gen X = uniform()
+eq_test, models(reg Y D; reg Y D S; reg Y D X) coef(e(b)[1,1]; e(b)[1,1]; e(b)[1,1]) brep(500) 
 ```
